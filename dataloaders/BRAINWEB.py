@@ -20,7 +20,7 @@ from utils.tfrecord_utils import *
 
 
 class BRAINWEB(object):
-    FILTER_TYPES = ['NORMAL', 'MILDMS', 'SEVEREMS']
+    FILTER_TYPES = ['NORMAL', 'MILDMS', 'MODERATEMS', 'SEVEREMS']
     SET_TYPES = ['TRAIN', 'VAL', 'TEST']
     LABELS = {'BACKGROUND': 0, 'CSF': 1, 'GM': 2, 'WM': 3, 'FAT': 4, 'MUSCLE': 5, 'SKIN': 6, 'SKULL': 7, 'GLIALMATTER': 8, 'CONNECTIVE': 9, 'LESION': 10}
     VIEW_MAPPING = {'saggital': 0, 'coronal': 1, 'axial': 2}
@@ -32,7 +32,7 @@ class BRAINWEB(object):
             self.dir = os.path.dirname(os.path.realpath(__file__))
             self.folderNormal = 'normal'
             self.folderMildMS = os.path.join('lesions', 'mild')
-            #self.folderModerateMS = os.path.join('lesions', 'moderate')
+            self.folderModerateMS = os.path.join('lesions', 'moderate')
             self.folderSevereMS = os.path.join('lesions', 'severe')
             self.folderGT = 'groundtruth'
             self.numSamples = -1
@@ -208,7 +208,7 @@ class BRAINWEB(object):
 
     @staticmethod
     def get_patients(options):
-        minc_folders = [options.folderNormal, options.folderMildMS, options.folderSevereMS]
+        minc_folders = [options.folderNormal, options.folderMildMS, options.folderModerateMS, options.folderSevereMS]
 
         # Iterate over all folders and collect patients
         patients = []
@@ -217,8 +217,8 @@ class BRAINWEB(object):
                 _type = 'NORMAL'
             elif minc_folder == options.folderMildMS:
                 _type = 'MILDMS'
-            #elif minc_folder == options.folderModerateMS:
-                #_type = 'MODERATEMS'
+            elif minc_folder == options.folderModerateMS:
+                _type = 'MODERATEMS'
             elif minc_folder == options.folderSevereMS:
                 _type = 'SEVEREMS'
 
@@ -243,8 +243,8 @@ class BRAINWEB(object):
                     patient['groundtruth_filename'] = os.path.join(options.dir, options.folderGT, 'normal.mnc.gz')
                 elif patient['type'] == 'MILDMS':
                     patient['groundtruth_filename'] = os.path.join(options.dir, options.folderGT, 'mild_lesions.mnc.gz')
-                #elif patient['type'] == 'MODERATEMS':
-                    #patient['groundtruth_filename'] = os.path.join(options.dir, options.folderGT, 'moderate_lesions.mnc.gz')
+                elif patient['type'] == 'MODERATEMS':
+                    patient['groundtruth_filename'] = os.path.join(options.dir, options.folderGT, 'moderate_lesions.mnc.gz')
                 elif patient['type'] == 'SEVEREMS':
                     patient['groundtruth_filename'] = os.path.join(options.dir, options.folderGT, 'severe_lesions.mnc.gz')
 

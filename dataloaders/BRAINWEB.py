@@ -208,7 +208,7 @@ class BRAINWEB(object):
 
     @staticmethod
     def get_patients(options):
-        minc_folders = [options.folderNormal, options.folderMildMS, options.folderModerateMS, options.folderSevereMS]
+        minc_folders = [options.folderNormal, options.folderMildMS, options.folderSevereMS]
 
         # Iterate over all folders and collect patients
         patients = []

@@ -1,5 +1,5 @@
 {
   "BRAINWEBDIR": "/content/gdrive/MyDrive/Unsupervised_Anomaly_Detection_Brain_MRI/data/Brainweb",
-  "CHECKPOINTDIR": "path/to/saved/checkpoints",
-  "SAMPLEDIR": "path/to/saved/sample_dir"
+  "CHECKPOINTDIR": "/content/gdrive/MyDrive/Unsupervised_Anomaly_Detection_Brain_MRI/saved/checkpoints",
+  "SAMPLEDIR": "/content/gdrive/MyDrive/Unsupervised_Anomaly_Detection_Brain_MRI/saved/sample_dir"
 }

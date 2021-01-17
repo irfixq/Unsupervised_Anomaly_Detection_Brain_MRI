@@ -188,7 +188,7 @@ class BRAINWEB(object):
             self._labels = numpy.array(_labels).astype(numpy.float32)
             # assert numpy.max(self._images) <= 1.0, "MINC range is outside [0; 1]!"
             if self._images.ndim < 4:
-                self._images = numpy.expand_dims(self._images, 3)
+                self._images = numpy.expand_dims(self._images, 1)
             self._sets = numpy.array(_sets).astype(numpy.int32)
             self._epochs_completed = {'TRAIN': 0, 'VAL': 0, 'TEST': 0}
             self._index_in_epoch = {'TRAIN': 0, 'VAL': 0, 'TEST': 0}
@@ -349,7 +349,8 @@ class BRAINWEB(object):
 
     @property
     def num_channels(self):
-        return self._images.shape[3]
+        print(self._images.shape)
+        return self._images.shape[0]
 
     @property
     def epochs_completed(self):

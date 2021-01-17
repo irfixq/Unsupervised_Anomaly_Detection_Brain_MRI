@@ -11,6 +11,8 @@ from trainers.DLMODEL import *
 class AE(AEMODEL):
     def __init__(self, sess, config, network=None):
         super().__init__(sess, config, network)
+        import tensorflow.compat.v1 as tf
+        tf.disable_v2_behavior()
         self.x = tf.placeholder(tf.float32, [None, self.config.outputHeight, self.config.outputWidth, self.config.numChannels], name='x')
         self.outputs = self.network(self.x, dropout_rate=self.dropout_rate, dropout=self.dropout, config=self.config)
         self.reconstruction = self.outputs['x_hat']

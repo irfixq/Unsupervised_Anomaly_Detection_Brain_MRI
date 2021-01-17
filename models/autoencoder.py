@@ -1,5 +1,7 @@
 import numpy as np
 import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from tensorflow.compat.v1.layers import Dense
 from tensorflow.python.keras.layers import Conv2D, Flatten, Dropout
 

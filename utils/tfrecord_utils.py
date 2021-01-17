@@ -1,7 +1,8 @@
 import numpy
 import tensorflow as tf
 
-
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 # Functions
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))

@@ -3,17 +3,23 @@ import os
 from enum import Enum
 
 from dataloaders.BRAINWEB import BRAINWEB
+from dataloaders.MSISBI2015 import MSISBI2015
+from dataloaders.MSLUB import MSLUB
+from dataloaders.MSSEG2008 import MSSEG2008
 
 base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Dataset(Enum):
     BRAINWEB = 'BRAINWEBDIR'
+    MSSEG2008_UNC = 'MSSEG2008DIR'
+    MSSEG2008_CHB = 'MSSEG2008DIR'
+    MSISBI2015 = 'MSISBI2015DIR'
+    MSLUB = 'MSLUBDIR'
 
 
 def get_options(batchsize, learningrate, numEpochs, zDim, outputWidth, outputHeight, slices_start=20, slices_end=130, numMonteCarloSamples=0, config=None):
     options = {}
-    
     # Load config.json, which should hold DATADIR, CHECKPOINTDIR and SAMPLEDIR
     if config:
         options["globals"] = config
@@ -66,15 +72,137 @@ def get_datasets(options, dataset: Dataset = Dataset.BRAINWEB):
         raise ValueError(f'No valid dataset given: {dataset}')
 
 
+###########################
+#       MSSEG2008         #
+###########################
+def get_MSSEG2008_dataset(options, filter_sanner):
+    dataset_options = get_MSSEG2008_dataset_options(options, filter_sanner)
+    dataset = MSSEG2008(dataset_options)
+    if options['debug']:
+        dataset.visualize()
+
+    return dataset
+
+
+def get_MSSEG2008_dataset_options(options, filter_sanner):
+    dataset_options = MSSEG2008.Options()
+    dataset_options.description = ''
+    dataset_options.debug = options['debug']
+    dataset_options.dir = options['globals']['MSSEG2008DIR']
+    dataset_options.useCrops = False
+    dataset_options.cropType = 'center'  # Crop patches around lesions
+    dataset_options.cropWidth = options['train']['outputWidth']
+    dataset_options.cropHeight = options['train']['outputHeight']
+    dataset_options.numRandomCropsPerSlice = 5  # Not needed when doing center crops
+    dataset_options.rotations = [0]
+    dataset_options.partition = {'TRAIN': 0, 'VAL': 2, 'TEST': 8}
+    dataset_options.sliceResolution = [options['train']['outputHeight'], options['train']['outputWidth']]
+    dataset_options.cache = True
+    dataset_options.numSamples = -1
+    dataset_options.addInstanceNoise = False
+    dataset_options.axis = 'axial'
+    dataset_options.filterScanner = filter_sanner  # 'UNC'or 'CHB'
+    dataset_options.filterProtocols = ['FLAIR']
+    dataset_options.filterType = "train"
+    dataset_options.normalizationMethod = 'scaling'
+    dataset_options.skullStripping = True
+    dataset_options.sliceStart = options['sliceStart']
+    dataset_options.sliceEnd = options['sliceEnd']
+    dataset_options.skullStripping = True
+    dataset_options.format = "aligned"
+
+    return dataset_options
+
+
+###########################
+#       MSISBI2015        #
+###########################
+def get_MSISBI2015_dataset(options):
+    dataset_options = get_MSISBI2015_dataset_options(options)
+    dataset = MSISBI2015(dataset_options)
+    if options['debug']:
+        dataset.visualize()
+
+    return dataset
+
+
+def get_MSISBI2015_dataset_options(options):
+    dataset_options = MSISBI2015.Options()
+    dataset_options.description = ''
+    dataset_options.debug = options['debug']
+    dataset_options.dir = options['globals']['MSISBI2015DIR']
+    dataset_options.useCrops = False
+    dataset_options.cropType = 'center'  # Crop patches around lesions
+    dataset_options.cropWidth = options['train']['outputWidth']
+    dataset_options.cropHeight = options['train']['outputHeight']
+    dataset_options.numRandomCropsPerSlice = 5  # Not needed when doing center crops
+    dataset_options.rotations = [0]
+    dataset_options.partition = {'TRAIN': 0, 'VAL': 5, 'TEST': 15}
+    dataset_options.sliceResolution = [options['train']['outputHeight'], options['train']['outputWidth']]
+    dataset_options.cache = True
+    dataset_options.numSamples = -1
+    dataset_options.addInstanceNoise = False
+    dataset_options.axis = 'axial'
+    dataset_options.filterProtocols = ['FLAIR']
+    dataset_options.filterType = "train"
+    dataset_options.normalizationMethod = 'scaling'
+    dataset_options.skullStripping = True
+    dataset_options.sliceStart = options['sliceStart']
+    dataset_options.sliceEnd = options['sliceEnd']
+    dataset_options.skullStripping = True
+    dataset_options.format = "aligned"
+    return dataset_options
+
+
+###########################
+#       MSLUB        #
+###########################
+def get_MSLUB_dataset(options):
+    dataset_options = get_MSLUB_dataset_options(options)
+    dataset = MSLUB(dataset_options)
+    if options['debug']:
+        dataset.visualize()
+
+    return dataset
+
+
+def get_MSLUB_dataset_options(options):
+    dataset_options = MSLUB.Options()
+    dataset_options.description = ''
+    dataset_options.debug = options['debug']
+    dataset_options.dir = options['globals']['MSLUBDIR']
+    dataset_options.useCrops = False
+    dataset_options.cropType = 'center'  # Crop patches around lesions
+    dataset_options.cropWidth = options['train']['outputWidth']
+    dataset_options.cropHeight = options['train']['outputHeight']
+    dataset_options.numRandomCropsPerSlice = 5  # Not needed when doing center crops
+    dataset_options.rotations = [0]
+    dataset_options.partition = {'TRAIN': 0, 'VAL': 5, 'TEST': 25}
+    dataset_options.sliceResolution = [options['train']['outputHeight'], options['train']['outputWidth']]
+    dataset_options.cache = True
+    dataset_options.numSamples = -1
+    dataset_options.addInstanceNoise = False
+    dataset_options.axis = 'axial'
+    dataset_options.filterProtocols = ['FLAIR']
+    dataset_options.normalizationMethod = 'scaling'
+    dataset_options.skullStripping = True
+    dataset_options.sliceStart = options['sliceStart']
+    dataset_options.sliceEnd = options['sliceEnd']
+    dataset_options.skullStripping = True
+    dataset_options.format = "aligned"
+
+    return dataset_options
+
+
 #######################
 #      Brainweb       #
 #######################
 def get_Brainweb_healthy_dataset(options):
     dataset_options = get_Brainweb_dataset_options(options)
-    datasetHC = BRAINWEB(dataset_options)
+    dataset_hc = BRAINWEB(dataset_options)
     if options['debug']:
-        datasetHC.visualize()
-    return datasetHC
+        dataset_hc.visualize()
+    return dataset_hc
 
 
 def get_Brainweb_lesion_dataset(options):
